@@ -205,11 +205,11 @@ void VDPSetVramAddress(VideoDisplayProcessorRef vdp, uint16_t addr) {
     vdp->vramAddr = addr;
 }
 
-#pragma mark Utilities
-
-inline VDPGraphicsMode VDPGetGraphicsMode(VideoDisplayProcessorRef vdp) {
-    
+VDPGraphicsMode VDPGetGraphicsMode(VideoDisplayProcessorRef vdp) {
+    return ((vdp->registers[1] & 0x03) << 1) | (vdp->registers[0] & 0x01);
 }
+
+#pragma mark Utilities
 
 inline VDPColor VDPGetBackgroundColor(VideoDisplayProcessorRef vdp) {
     return vdp->registers[0x7] & 0x0F;

@@ -44,7 +44,7 @@ typedef enum {
     kVDPGraphicsMode1 = 0,
     kVDPGraphicsMode2 = 1,
     kVDPGraphicsModeMultiColor = 2,
-    kVDPGraphicsModeText = 3
+    kVDPGraphicsModeText = 4
 } VDPGraphicsMode;
 
 #pragma mark Lifecycle
@@ -107,5 +107,8 @@ extern uint16_t VDPGetVramAddress(VideoDisplayProcessorRef ref);
 
 /// sets the current vram address outside of the normal write process
 extern void VDPSetVramAddress(VideoDisplayProcessorRef ref, uint16_t addr);
+
+/// gets the current graphics mode
+extern VDPGraphicsMode VDPGetGraphicsMode(VideoDisplayProcessorRef ref);
 
 #endif /* VideoDisplayProcessor_h */
