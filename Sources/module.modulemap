@@ -1,0 +1,6 @@
+framework module VideoDisplayProcessor {
+    header "VideoDisplayProcessor.h"
+
+    private header "VideoDisplayProcessor_Private.h"
+    private header "GraphicsMode1.h"
+}

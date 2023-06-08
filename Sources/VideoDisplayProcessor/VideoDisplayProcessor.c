@@ -6,12 +6,34 @@
 //
 
 #include "VideoDisplayProcessor.h"
+#include "VideoDisplayProcessor_Private.h"
+#include "GraphicsMode1.h"
 
 #include <memory.h>
 #include <stdlib.h>
 
 #define kVDPRegisterCount   8
+#define kVDPVramMask        (kVDPVramSize - 1)
 #define kVDPUnsetAddr       0xFFFF  // 0xFFFF is outside of valid vram space so we're using this to express the register is in stage 1
+
+const uint32_t VDPColorPalette[] = {
+    0x00000000, // kVDPColorTransparent
+    0x000000ff, // kVDPColorBlack
+    0x21c942ff, // kVDPColorMediumGreen
+    0x5edc78ff, // kVDPColorLightGreen
+    0x5455edff, // kVDPColorDarkBlue
+    0x7d75fcff, // kVDPColorLightBlue
+    0xd3524dff, // kVDPColorDarkRed
+    0x43ebf6ff, // kVDPColorCyan
+    0xfd5554ff, // kVDPColorMediumRed
+    0xff7978ff, // kVDPColorLightRed
+    0xd3c153ff, // kVDPColorDarkYellow
+    0xe5ce80ff, // kVDPColorLightYellow
+    0x21b03cff, // kVDPColorDarkGreen
+    0xc95bbaff, // kVDPColorMagenta
+    0xccccccff, // kVDPColorGray
+    0xffffffff  // kVDPColorWhite
+};
 
 struct __VideoDisplayProcessor {
     /// write-only registers
@@ -144,7 +166,24 @@ void VDPGetScanline(VideoDisplayProcessorRef vdp, uint8_t rowIdx, uint8_t pixelB
         return;
     }
 
-    
+    switch (VDPGetGraphicsMode(vdp)) {
+        case kVDPGraphicsMode1:
+            GraphicsMode1GetScanline(vdp, rowIdx, pixelBuffer);
+            break;
+
+        case kVDPGraphicsMode2:
+            break;
+
+        case kVDPGraphicsModeMultiColor:
+            break;
+
+        case kVDPGraphicsModeText:
+            break;
+
+        default:
+            // unsupported mode, just copy zeroes into the buffer
+            memset(pixelBuffer, 0, kVDPSizeX);
+    }
 }
 
 #pragma mark Debugger Access
@@ -178,7 +217,7 @@ uint8_t VDPGetVram(VideoDisplayProcessorRef vdp, uint16_t addr) {
         return 0;
     }
 
-    return vdp->vram[addr & (kVDPVramSize - 1)];
+    return vdp->vram[addr & kVDPVramMask];
 }
 
 void VDPSetVram(VideoDisplayProcessorRef vdp, uint16_t addr, uint8_t value) {
@@ -186,7 +225,7 @@ void VDPSetVram(VideoDisplayProcessorRef vdp, uint16_t addr, uint8_t value) {
         return;
     }
 
-    vdp->vram[addr & (kVDPVramSize - 1)] = value;
+    vdp->vram[addr & kVDPVramMask] = value;
 }
 
 uint16_t VDPGetVramAddress(VideoDisplayProcessorRef vdp) {
@@ -211,10 +250,51 @@ VDPGraphicsMode VDPGetGraphicsMode(VideoDisplayProcessorRef vdp) {
 
 #pragma mark Utilities
 
-inline VDPColor VDPGetBackgroundColor(VideoDisplayProcessorRef vdp) {
-    return vdp->registers[0x7] & 0x0F;
+uint16_t VDPGetVramNameTableAddress(VideoDisplayProcessorRef vdp) {
+    if (!vdp) {
+        return kVDPUnsetAddr;
+    }
+
+    return (vdp->registers[2] << 10) & kVDPVramMask;
 }
 
-inline VDPColor VDPGetForegroundColor(VideoDisplayProcessorRef vdp) {
-    return vdp->registers[0x7] >> 4;
+uint16_t VDPGetVramColorTableAddress(VideoDisplayProcessorRef vdp) {
+    if (!vdp) {
+        return kVDPUnsetAddr;
+    }
+
+    // TODO: does this differ in gfx mode II?
+    return (vdp->registers[3] << 6) & kVDPVramMask;
+}
+
+uint16_t VDPGetVramPatternTableAddress(VideoDisplayProcessorRef vdp) {
+    if (!vdp) {
+        return kVDPUnsetAddr;
+    }
+
+    return (vdp->registers[4] << 11) & kVDPVramMask;
+}
+
+uint16_t VDPGetVramSpriteAttributesAddress(VideoDisplayProcessorRef vdp) {
+    if (!vdp) {
+        return kVDPUnsetAddr;
+    }
+
+    return (vdp->registers[5] << 7) & kVDPVramMask;
+}
+
+uint16_t VDPGetVramSpriteNamesAddress(VideoDisplayProcessorRef vdp) {
+    if (!vdp) {
+        return kVDPUnsetAddr;
+    }
+
+    return (vdp->registers[6] << 11) & kVDPVramMask;
+}
+
+VDPColor VDPGetBackgroundColor(VideoDisplayProcessorRef vdp) {
+    return VDPColorBackground(vdp->registers[0x7]);
+}
+
+VDPColor VDPGetForegroundColor(VideoDisplayProcessorRef vdp) {
+    return VDPColorForeground(vdp->registers[0x7]);
 }

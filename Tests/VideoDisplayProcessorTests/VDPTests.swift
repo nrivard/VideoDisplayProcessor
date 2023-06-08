@@ -176,4 +176,18 @@ final class VDPTests: XCTestCase {
 
         XCTAssert(VDPGetGraphicsMode(vdp) == kVDPGraphicsModeText);
     }
+
+    func testGraphicsMode1() {
+        // put in mode 1
+        VDPSetRegister(vdp, 0, 0);
+        VDPSetRegister(vdp, 1, 0);
+
+        // set background color to something other than transparent
+        VDPSetRegister(vdp, 7, UInt8(kVDPColorMagenta.rawValue));
+
+        let buffer = UnsafeMutableBufferPointer<UInt8>.allocate(capacity: Int(kVDPSizeX));
+        VDPGetScanline(vdp, 0, buffer.baseAddress);
+
+        XCTAssert(buffer[10] == UInt8(kVDPColorMagenta.rawValue));
+    }
 }

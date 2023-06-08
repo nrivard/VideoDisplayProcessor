@@ -22,24 +22,29 @@ typedef struct __VideoDisplayProcessor *VideoDisplayProcessorRef;
 /// Color palette indices
 typedef enum {
     kVDPColorTransparent = 0,
-    kVDPColorBlack,
-    kVDPColorMediumGreen,
-    kVDPColorLightGreen,
-    kVDPColorDarkBlue,
-    kVDPColorLightBlue,
-    kVDPColorDarkRed,
-    kVDPColorCyan,
-    kVDPColorMediumRed,
-    kVDPColorLightRed,
-    kVDPColorDarkYellow,
-    kVDPColorLightYellow,
-    kVDPColorDarkGreen,
-    kVDPColorMagenta,
-    kVDPColorGray,
-    kVDPColorWhite
+    kVDPColorBlack = 1,
+    kVDPColorMediumGreen = 2,
+    kVDPColorLightGreen = 3,
+    kVDPColorDarkBlue = 4,
+    kVDPColorLightBlue = 5,
+    kVDPColorDarkRed = 6,
+    kVDPColorCyan = 7,
+    kVDPColorMediumRed = 8,
+    kVDPColorLightRed = 9,
+    kVDPColorDarkYellow = 10,
+    kVDPColorLightYellow = 11,
+    kVDPColorDarkGreen = 12,
+    kVDPColorMagenta = 13,
+    kVDPColorGray = 14,
+    kVDPColorWhite = 15
 } VDPColor;
 
+/// Available colors on the VDP, 16 in total
+/// they are given in RGBA format
+extern const uint32_t VDPColorPalette[];
+
 /// Current graphics mode
+/// this takes advantage of the fact that values happen to be a bitfield
 typedef enum {
     kVDPGraphicsMode1 = 0,
     kVDPGraphicsMode2 = 1,
