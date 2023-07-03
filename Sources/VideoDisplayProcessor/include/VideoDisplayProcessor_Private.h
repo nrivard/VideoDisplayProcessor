@@ -37,10 +37,4 @@ extern uint16_t VDPGetVramSpriteAttributesAddress(VideoDisplayProcessorRef vdp);
 /// gets the address for the start of the sprite names table in VRAM
 extern uint16_t VDPGetVramSpriteNamesAddress(VideoDisplayProcessorRef vdp);
 
-/// gets the current background color
-extern VDPColor VDPGetBackgroundColor(VideoDisplayProcessorRef vdp);
-
-/// gets the current foreground (only for `kVDPGraphicsModeText`!) color
-extern VDPColor VDPGetForegroundColor(VideoDisplayProcessorRef vdp);
-
 #endif /* Header_h */

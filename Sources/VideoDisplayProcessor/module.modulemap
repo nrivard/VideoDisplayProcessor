@@ -1,6 +1,5 @@
 framework module VideoDisplayProcessor {
-    header "VideoDisplayProcessor.h"
+    umbrella header "VideoDisplayProcessor-umbrella.h"
 
     private header "VideoDisplayProcessor_Private.h"
-    private header "GraphicsMode1.h"
 }

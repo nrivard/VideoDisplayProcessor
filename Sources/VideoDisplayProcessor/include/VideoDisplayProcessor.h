@@ -41,7 +41,7 @@ typedef enum {
 
 /// Available colors on the VDP, 16 in total
 /// they are given in RGBA format
-extern const uint32_t VDPColorPalette[];
+extern const uint32_t * const VDPColorPalette;
 
 /// Current graphics mode
 /// this takes advantage of the fact that values happen to be a bitfield
@@ -89,6 +89,11 @@ extern uint8_t VDPReadFromDataPort(VideoDisplayProcessorRef ref);
 /// `pixels` is filled out with `VDPColor` values
 extern void VDPGetScanline(VideoDisplayProcessorRef ref, uint8_t rowIdx, uint8_t pixelBuffer[kVDPSizeX]);
 
+/// called after last scanline is requested if interrupts are enabled
+/// Note: this is called _before_ returning the last scanline, so if you want to mimic the hardware,
+/// you will need to setup your own async mechanism to order these two events
+extern void VDPSetInterruptHandler(VideoDisplayProcessorRef ref, void * observer, void (*handler)(void *));
+
 /// Allows debuggers to access internal state
 #pragma mark Debugger Access
 
@@ -115,5 +120,11 @@ extern void VDPSetVramAddress(VideoDisplayProcessorRef ref, uint16_t addr);
 
 /// gets the current graphics mode
 extern VDPGraphicsMode VDPGetGraphicsMode(VideoDisplayProcessorRef ref);
+
+/// gets the current background color
+extern VDPColor VDPGetBackgroundColor(VideoDisplayProcessorRef vdp);
+
+/// gets the current foreground (only for `kVDPGraphicsModeText`!) color
+extern VDPColor VDPGetForegroundColor(VideoDisplayProcessorRef vdp);
 
 #endif /* VideoDisplayProcessor_h */

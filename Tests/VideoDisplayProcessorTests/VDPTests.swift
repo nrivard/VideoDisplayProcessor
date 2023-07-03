@@ -177,17 +177,30 @@ final class VDPTests: XCTestCase {
         XCTAssert(VDPGetGraphicsMode(vdp) == kVDPGraphicsModeText);
     }
 
-    func testGraphicsMode1() {
-        // put in mode 1
-        VDPSetRegister(vdp, 0, 0);
-        VDPSetRegister(vdp, 1, 0);
+    func testInterrupt() {
+        // given
+        var interrupted = false
+        VDPSetInterruptHandler(vdp, &interrupted) { boolPtr in
+            guard let opaquePtr = boolPtr else {
+                return
+            }
 
-        // set background color to something other than transparent
-        VDPSetRegister(vdp, 7, UInt8(kVDPColorMagenta.rawValue));
+            let irq = opaquePtr.assumingMemoryBound(to: Bool.self)
+            irq.pointee = true
+        }
 
-        let buffer = UnsafeMutableBufferPointer<UInt8>.allocate(capacity: Int(kVDPSizeX));
-        VDPGetScanline(vdp, 0, buffer.baseAddress);
+        // when
+        let buffer = UnsafeMutableBufferPointer<UInt8>.allocate(capacity: Int(kVDPSizeX))
+        VDPGetScanline(vdp, UInt8(kVDPSizeY - 1), buffer.baseAddress)
 
-        XCTAssert(buffer[10] == UInt8(kVDPColorMagenta.rawValue));
+        // then (interrupts are _off_)
+        XCTAssertFalse(interrupted)
+
+        // turn on interrupts
+        VDPSetRegister(vdp, 1, 0b11100000)
+        VDPGetScanline(vdp, UInt8(kVDPSizeY - 1), buffer.baseAddress)
+
+        // then (interrupts are _on_)
+        XCTAssert(interrupted)
     }
 }

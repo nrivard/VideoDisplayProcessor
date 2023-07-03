@@ -15,8 +15,13 @@
 #define kVDPRegisterCount   8
 #define kVDPVramMask        (kVDPVramSize - 1)
 #define kVDPUnsetAddr       0xFFFF  // 0xFFFF is outside of valid vram space so we're using this to express the register is in stage 1
+#define kVDPDisplayEnMask   0b01000000
+#define kVDPIRQEnMask       0b00100000
+#define kVDPStatusIRQMask    0b10000000
+#define kVDPStatus5thSprMask 0b01000000
+#define kVDPStatusSprCoMask  0b0010000
 
-const uint32_t VDPColorPalette[] = {
+const uint32_t VDPColorPaletteArray[] = {
     0x00000000, // kVDPColorTransparent
     0x000000ff, // kVDPColorBlack
     0x21c942ff, // kVDPColorMediumGreen
@@ -34,6 +39,12 @@ const uint32_t VDPColorPalette[] = {
     0xccccccff, // kVDPColorGray
     0xffffffff  // kVDPColorWhite
 };
+const uint32_t * const VDPColorPalette = VDPColorPaletteArray;
+
+typedef struct {
+    void *observer;
+    void (*handler)(void *observer);
+} InterruptHandler;
 
 struct __VideoDisplayProcessor {
     /// write-only registers
@@ -55,6 +66,8 @@ struct __VideoDisplayProcessor {
 
     /// the VDP has a read-ahead buffer which is important to simulate to get proper real-world behavior
     uint8_t readAheadBuffer;
+
+    InterruptHandler interruptHandler;
 };
 
 #pragma mark Lifecycle
@@ -88,6 +101,7 @@ void VDPReset(VideoDisplayProcessorRef vdp) {
     vdp->readAheadBuffer = 0;
     vdp->registerValue = kVDPUnsetAddr;
     memset(vdp->registers, 0, sizeof(vdp->registers));
+    memset(&vdp->interruptHandler, 0, sizeof(vdp->interruptHandler));
 }
 
 void VDPWriteToRegisterPort(VideoDisplayProcessorRef vdp, uint8_t value) {
@@ -162,7 +176,7 @@ uint8_t VDPReadFromDataPort(VideoDisplayProcessorRef vdp) {
 #pragma mark Video Display
 
 void VDPGetScanline(VideoDisplayProcessorRef vdp, uint8_t rowIdx, uint8_t pixelBuffer[kVDPSizeX]) {
-    if (!vdp) {
+    if (!vdp || !(vdp->registers[1] & kVDPDisplayEnMask)) {
         return;
     }
 
@@ -184,6 +198,19 @@ void VDPGetScanline(VideoDisplayProcessorRef vdp, uint8_t rowIdx, uint8_t pixelB
             // unsupported mode, just copy zeroes into the buffer
             memset(pixelBuffer, 0, kVDPSizeX);
     }
+
+    if (rowIdx == kVDPSizeY - 1) {
+        vdp->status |= kVDPStatusIRQMask;
+
+        if (vdp->interruptHandler.handler && (vdp->registers[1] & kVDPIRQEnMask)) {
+            (*vdp->interruptHandler.handler)(vdp->interruptHandler.observer);
+        }
+    }
+}
+
+void VDPSetInterruptHandler(VideoDisplayProcessorRef vdp, void *observer, void (*handler)(void *)) {
+    vdp->interruptHandler.observer = observer;
+    vdp->interruptHandler.handler = handler;
 }
 
 #pragma mark Debugger Access
