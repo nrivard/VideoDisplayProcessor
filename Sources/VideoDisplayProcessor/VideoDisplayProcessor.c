@@ -272,7 +272,7 @@ void VDPSetVramAddress(VideoDisplayProcessorRef vdp, uint16_t addr) {
 }
 
 VDPGraphicsMode VDPGetGraphicsMode(VideoDisplayProcessorRef vdp) {
-    return ((vdp->registers[1] & 0x03) << 1) | (vdp->registers[0] & 0x01);
+    return ((vdp->registers[1] & 0x18) >> 2) | ((vdp->registers[0] & 0x02) >> 1);
 }
 
 #pragma mark Utilities

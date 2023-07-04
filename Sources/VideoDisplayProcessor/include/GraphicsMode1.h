@@ -10,6 +10,6 @@
 
 #include "VideoDisplayProcessor.h"
 
-void GraphicsMode1GetScanline(VideoDisplayProcessorRef ref, uint8_t rowIdx, uint8_t pixelBuffer[kVDPSizeX]);
+extern void GraphicsMode1GetScanline(VideoDisplayProcessorRef ref, uint8_t rowIdx, uint8_t pixelBuffer[kVDPSizeX]);
 
 #endif /* Header_h */

@@ -153,26 +153,26 @@ final class VDPTests: XCTestCase {
 
     func testGetGrahpicsMode() {
         // graphics mode 1
-        VDPSetRegister(vdp, 0, 0);
-        VDPSetRegister(vdp, 1, 0);
+        VDPSetRegister(vdp, 0, 0x00);
+        VDPSetRegister(vdp, 1, 0x00);
 
         XCTAssert(VDPGetGraphicsMode(vdp) == kVDPGraphicsMode1);
 
         // graphics mode 2
-        VDPSetRegister(vdp, 0, 1);
-        VDPSetRegister(vdp, 1, 0);
+        VDPSetRegister(vdp, 0, 0x02);
+        VDPSetRegister(vdp, 1, 0x00);
 
         XCTAssert(VDPGetGraphicsMode(vdp) == kVDPGraphicsMode2);
 
         // multicolor
-        VDPSetRegister(vdp, 0, 0);
-        VDPSetRegister(vdp, 1, 1);
+        VDPSetRegister(vdp, 0, 0x00);
+        VDPSetRegister(vdp, 1, 0x01 << 3);
 
         XCTAssert(VDPGetGraphicsMode(vdp) == kVDPGraphicsModeMultiColor);
 
         // text
-        VDPSetRegister(vdp, 0, 0);
-        VDPSetRegister(vdp, 1, 2);
+        VDPSetRegister(vdp, 0, 0x00);
+        VDPSetRegister(vdp, 1, 0x02 << 3);
 
         XCTAssert(VDPGetGraphicsMode(vdp) == kVDPGraphicsModeText);
     }

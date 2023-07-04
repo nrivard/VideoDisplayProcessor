@@ -11,7 +11,7 @@
 #include <memory.h>
 #include <stdlib.h>
 
-extern void GraphicsMode1GetScanline(VideoDisplayProcessorRef vdp, uint8_t rowIdx, uint8_t pixelBuffer[kVDPSizeX])  {
+void GraphicsMode1GetScanline(VideoDisplayProcessorRef vdp, uint8_t rowIdx, uint8_t pixelBuffer[kVDPSizeX])  {
     if (!vdp) {
         return;
     }
