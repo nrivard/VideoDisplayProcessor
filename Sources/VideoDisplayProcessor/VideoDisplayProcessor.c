@@ -8,6 +8,7 @@
 #include "VideoDisplayProcessor.h"
 #include "VideoDisplayProcessor_Private.h"
 #include "GraphicsMode1.h"
+#include "TextMode.h"
 
 #include <memory.h>
 #include <stdlib.h>
@@ -192,6 +193,7 @@ void VDPGetScanline(VideoDisplayProcessorRef vdp, uint8_t rowIdx, uint8_t pixelB
             break;
 
         case kVDPGraphicsModeText:
+            TextModeGetScanline(vdp, rowIdx, pixelBuffer);
             break;
 
         default:

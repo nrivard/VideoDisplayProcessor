@@ -75,8 +75,8 @@ final class GraphicsMode1Tests: XCTestCase {
         vdp = VDPCreate()
 
         // put VDP in graphics mode 1
-        VDPSetRegister(vdp, 0, 0);
-        VDPSetRegister(vdp, 1, 0);
+        VDPSetRegister(vdp, 0, 0x00);
+        VDPSetRegister(vdp, 1, 0xC0);
 
         // setup table addresses
         VDPSetRegister(vdp, 2, 0x05); // 0x1400

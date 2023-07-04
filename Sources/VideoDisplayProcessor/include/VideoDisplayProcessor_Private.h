@@ -15,6 +15,7 @@
 #define kVDPGraphicsPatternWidth   8
 #define kVDPTextTileX             40
 #define kVDPTextTileY             24
+#define kVDPTextPatternWidth       6
 #define kVDPPatternSize            8
 
 #define VDPColorBackground(x)   (x & 0x0F)
