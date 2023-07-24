@@ -177,7 +177,13 @@ uint8_t VDPReadFromDataPort(VideoDisplayProcessorRef vdp) {
 #pragma mark Video Display
 
 void VDPGetScanline(VideoDisplayProcessorRef vdp, uint8_t rowIdx, uint8_t pixelBuffer[kVDPSizeX]) {
-    if (!vdp || !(vdp->registers[1] & kVDPDisplayEnMask)) {
+    if (!vdp) {
+        return;
+    }
+
+    if (!(vdp->registers[1] & kVDPDisplayEnMask)) {
+        // display disabled, just fill buffer with background color
+        memset(pixelBuffer, VDPGetBackgroundColor(vdp), kVDPSizeX);
         return;
     }
 
@@ -197,8 +203,8 @@ void VDPGetScanline(VideoDisplayProcessorRef vdp, uint8_t rowIdx, uint8_t pixelB
             break;
 
         default:
-            // unsupported mode, just copy zeroes into the buffer
-            memset(pixelBuffer, 0, kVDPSizeX);
+            // unsupported mode, just fill buffer with background color
+            memset(pixelBuffer, VDPGetBackgroundColor(vdp), kVDPSizeX);
     }
 
     if (rowIdx == kVDPSizeY - 1) {

@@ -10,8 +10,11 @@
 
 #include <stdio.h>
 
+/// sizes in pixels
 #define kVDPSizeX               256
 #define kVDPSizeY               192
+
+/// size in bytes
 #define kVDPVramSize            0x4000
 
 #define kVDPRegisterWriteMask   0x80
