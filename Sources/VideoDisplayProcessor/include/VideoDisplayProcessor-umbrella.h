@@ -11,5 +11,7 @@
 #include "VideoDisplayProcessor.h"
 #include "VideoDisplayProcess_Private.h"
 #include "GraphicsMode1.h"
+#include "TextMode.h"
+#include "Sprites.h"
 
 #VideoDisplayProcessor_Umbrella_h /* Header_h */

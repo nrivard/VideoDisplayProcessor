@@ -187,6 +187,11 @@ void VDPGetScanline(VideoDisplayProcessorRef vdp, uint8_t rowIdx, uint8_t pixelB
         return;
     }
 
+    if (rowIdx == 0) {
+        // reset sprite collision flag and collision row
+        vdp->status = 0;
+    }
+
     switch (VDPGetGraphicsMode(vdp)) {
         case kVDPGraphicsMode1:
             GraphicsMode1GetScanline(vdp, rowIdx, pixelBuffer);
@@ -239,12 +244,32 @@ void VDPSetRegister(VideoDisplayProcessorRef vdp, uint8_t registerIdx, uint8_t v
     vdp->registers[registerIdx & (kVDPRegisterCount - 1)] = value;
 }
 
-void VDPGetVramContents(VideoDisplayProcessorRef vdp, uint8_t vramBuffer[kVDPVramSize]) {
+uint8_t VDPGetStatus(VideoDisplayProcessorRef vdp) {
+    if (!vdp) {
+        return 0;
+    }
+
+    return vdp->status;
+}
+
+void VDPSetStatus(VideoDisplayProcessorRef vdp, uint8_t status) {
     if (!vdp) {
         return;
     }
 
-    memcpy(vramBuffer, vdp->vram, kVDPVramSize);
+    vdp->status = status;
+}
+
+void VDPGetVramBlock(VideoDisplayProcessorRef vdp, uint16_t address, uint8_t *const buffer, uint16_t size) {
+    if (!vdp) {
+        return;
+    }
+
+    memcpy(buffer, vdp->vram + address, size);
+}
+
+void VDPGetVramContents(VideoDisplayProcessorRef vdp, uint8_t vramBuffer[kVDPVramSize]) {
+    VDPGetVramBlock(vdp, 0x00, vramBuffer, kVDPVramSize);
 }
 
 uint8_t VDPGetVram(VideoDisplayProcessorRef vdp, uint16_t addr) {

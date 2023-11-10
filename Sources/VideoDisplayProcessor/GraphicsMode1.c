@@ -6,6 +6,7 @@
 //
 
 #include "GraphicsMode1.h"
+#include "Sprites.h"
 #include "VideoDisplayProcessor_Private.h"
 
 #include <memory.h>
@@ -39,4 +40,7 @@ void GraphicsMode1GetScanline(VideoDisplayProcessorRef vdp, uint8_t rowIdx, uint
             ++pixels;
         }
     }
+
+    // overwrite with sprites
+    SpritesOverwriteScanline(vdp, rowIdx, pixelBuffer);
 }

@@ -1,8 +1,8 @@
-# vrEmuTms9918 - TMS9918 / TMS9918A / TMS9929A VDP Emulator
+# VideoDisplayProcessor - TMS9918 / TMS9918A / TMS9929A VDP Simulator
 
-TMS9918 emulator. Core engine written in C99. Zero dependencies.
+TMS9918 simulator. Swift package. Written in Foundation style. Tested in Swift. Based on [visrealm's simulator](https://github.com/visrealm/vrEmuTms9918). 
 
-The goal is to emulate all documented modes listed in the [TMS9918A/TMS9928A/TMS9929A datasheet](http://www1.cs.columbia.edu/~sedwards/papers/TMS9918.pdf)
+The goal is to simulate all documented modes listed in the [TMS9918A/TMS9928A/TMS9929A datasheet](http://www1.cs.columbia.edu/~sedwards/papers/TMS9918.pdf)
 
 ## Supported Modes
 
@@ -15,7 +15,7 @@ The goal is to emulate all documented modes listed in the [TMS9918A/TMS9928A/TMS
 
 * 5th sprite
 * Sprite collisions
-* VSYNC interrupt
+* VSYNC interrupt callback
 * Individual scanline rendering
 
 ## Demos:
